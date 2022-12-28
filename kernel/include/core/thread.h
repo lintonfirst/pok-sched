@@ -47,8 +47,11 @@
 
 typedef struct {
   uint8_t priority;
+  uint8_t budget;
+  uint8_t weight;
   int64_t period;
   uint64_t deadline;
+  uint64_t deadline_stamp;
   int64_t time_capacity;
   int64_t remaining_time_capacity;
   uint64_t next_activation;
@@ -67,6 +70,7 @@ typedef struct {
 
 typedef struct {
   uint8_t priority; /* Priority is from 0 to 255 */
+  uint8_t weight;
   uint8_t processor_affinity;
   void *entry; /* entrypoint of the thread  */
   uint64_t period;

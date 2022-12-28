@@ -1,5 +1,6 @@
 TOPDIR=		../../
 
+
 include $(TOPDIR)/misc/mk/config.mk
 -include $(TOPDIR)/misc/mk/common-$(ARCH).mk
 
@@ -11,6 +12,7 @@ LO_OBJS=	partition.o \
 			lockobj.o \
 			thread.o \
 			instrumentation.o \
+			my_sched.o \
 			sched.o \
 			time.o \
 			syscall.o \

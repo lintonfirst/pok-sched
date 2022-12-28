@@ -36,6 +36,7 @@ my @cflags =
 (
  "-W",
  "-Wall",
+ "-Wno-unused-parameter",
  "-g",
  "-m32"
  );

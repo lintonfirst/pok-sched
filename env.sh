@@ -1,0 +1,1 @@
+export POK_PATH=${pwd}
