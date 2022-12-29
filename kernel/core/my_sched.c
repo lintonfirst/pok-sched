@@ -77,5 +77,6 @@ uint32_t my_sched_wrr(const uint32_t index_low, const uint32_t index_high, const
     if(selected!=IDLE_THREAD){
         pok_threads[selected].budget=4*pok_threads[selected].weight;
     }
+    printf("%u\n",selected);
     return selected;
 }

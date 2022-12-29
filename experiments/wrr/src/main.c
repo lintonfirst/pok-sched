@@ -13,19 +13,19 @@ int main() {
 
     tattr.period = 1000;
     tattr.time_capacity = 100;
-    tattr.priority = 30;
+    tattr.weight = 1;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 
     tattr.period = 800;
     tattr.time_capacity = 200;
-    tattr.priority = 50;
+    tattr.weight = 2;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 
     tattr.period = 1000;
     tattr.time_capacity = 300;
-    tattr.priority = 20;
+    tattr.weight = 3;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 

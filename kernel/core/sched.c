@@ -219,11 +219,13 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
         thread->deadline_stamp = thread->next_activation + thread->deadline;
 
         if (thread->deadline > 0) {
-          printf("Thread %u activated at %u, deadline at %u\n", (unsigned)i,
+          printf("Partiton %u,Thread %u activated at %u, deadline at %u\n", (unsigned)i,
+                 (unsigned)pok_current_partition + 1,
                  (unsigned)thread->next_activation,
                  (unsigned)thread->deadline_stamp);
         } else {
-          printf("Thread %u activated at %u\n", (unsigned)i,
+          printf("Partiton %u,Thread %u activated at %u\n", (unsigned)i,
+                 (unsigned)pok_current_partition + 1,
                  (unsigned)thread->next_activation);
         }
       }
