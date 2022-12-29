@@ -32,6 +32,7 @@
 #include <dependencies.h>
 #include <errno.h>
 
+#include <core/my_sched.h>
 #include <libc.h>
 
 /**
@@ -66,8 +67,19 @@ void pok_partition_setup_scheduler(const uint8_t pid) {
      * Default scheduling algorithm is Round Robin.
      * Yes, it sucks
      */
-  default:
-    pok_partitions[pid].sched_func = &pok_sched_part_rr;
+  case MY_SCHED_PRIORITY:
+    pok_partitions[pid].sched_func = &my_sched_priority;
+    break;
+  case MY_SCHED_EDF:
+    pok_partitions[pid].sched_func = &my_sched_edf;
+    break;
+  case MY_SCHED_RR:
+    pok_partitions[pid].sched_func = &my_sched_rr;
+    break;
+  case MY_SCHED_WRR:
+    pok_partitions[pid].sched_func = &my_sched_wrr;
+    break;
+  default : pok_partitions[pid].sched_func = &pok_sched_part_rr;
     break;
   }
 #else
