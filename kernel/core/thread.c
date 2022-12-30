@@ -71,6 +71,7 @@ void pok_idle_thread_init() {
 
     pok_threads[IDLE_THREAD - i].period = INFINITE_TIME_VALUE;
     pok_threads[IDLE_THREAD - i].deadline = 0;
+    pok_threads[IDLE_THREAD - i].budget = 0;
     pok_threads[IDLE_THREAD - i].deadline_stamp = 0;
     pok_threads[IDLE_THREAD - i].time_capacity = INFINITE_TIME_VALUE;
     pok_threads[IDLE_THREAD - i].next_activation = 0;

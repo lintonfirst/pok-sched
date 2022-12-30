@@ -11,21 +11,21 @@ int main() {
     pok_thread_attr_t tattr;
     memset(&tattr, 0, sizeof(pok_thread_attr_t));
 
-    tattr.period = 1000;
-    tattr.time_capacity = 100;
-    tattr.deadline = 1000;
+    tattr.period = 100000000;
+    tattr.time_capacity = 10;
+    tattr.deadline = 100000000;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 
-    tattr.period = 800;
-    tattr.time_capacity = 200;
-    tattr.deadline = 600;
+    tattr.period = 80000000;
+    tattr.time_capacity = 20;
+    tattr.deadline = 60000000;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 
-    tattr.period = 1000;
-    tattr.time_capacity = 300;
-    tattr.deadline = 500;
+    tattr.period = 100000000;
+    tattr.time_capacity = 30;
+    tattr.deadline = 50000000;
     tattr.entry = task;
     pok_thread_create(&tid, &tattr);
 

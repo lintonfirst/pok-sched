@@ -9,6 +9,9 @@ uint32_t my_sched_priority(const uint32_t index_low, const uint32_t index_high, 
                                const uint32_t current_thread) {
     uint32_t highest_property_thread = IDLE_THREAD;
     for(uint32_t index=index_low;index!=index_high;index++){
+        // if(pok_threads[index].state == POK_STATE_RUNNABLE){
+        //     printf("%llu\n",pok_threads[index].remaining_time_capacity);
+        // }
         if(pok_threads[index].state == POK_STATE_RUNNABLE && pok_threads[index].priority>pok_threads[highest_property_thread].priority){
             highest_property_thread=index;
         }
@@ -45,18 +48,17 @@ uint32_t my_sched_rr(const uint32_t index_low, const uint32_t index_high, const 
     if (pok_threads[current_thread].state == POK_STATE_RUNNABLE
         && pok_threads[current_thread].remaining_time_capacity > 0 && pok_threads[current_thread].budget > 0) {
         pok_threads[current_thread].budget--;
-        printf("%u\n",current_thread);
         return current_thread;
     }
     for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state != POK_STATE_RUNNABLE && index!=current_thread){
+        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
             selected=index;
+            break;
         }
     }
     if(selected!=IDLE_THREAD){
         pok_threads[selected].budget=4;
     }
-    printf("%u\n",selected);
     return selected;
 }
 
@@ -70,13 +72,13 @@ uint32_t my_sched_wrr(const uint32_t index_low, const uint32_t index_high, const
         return current_thread;
     }
     for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state != POK_STATE_RUNNABLE && index!=current_thread){
+        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
             selected=index;
+            break;
         }
     }
     if(selected!=IDLE_THREAD){
         pok_threads[selected].budget=4*pok_threads[selected].weight;
     }
-    printf("%u\n",selected);
     return selected;
 }

@@ -219,13 +219,15 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
         thread->deadline_stamp = thread->next_activation + thread->deadline;
 
         if (thread->deadline > 0) {
-          printf("Partiton %u,Thread %u activated at %u, deadline at %u\n", (unsigned)i,
+          printf("Partiton %u,Thread %u activated at %u, deadline at %u\n", 
                  (unsigned)pok_current_partition + 1,
+                 (unsigned)i,
                  (unsigned)thread->next_activation,
                  (unsigned)thread->deadline_stamp);
         } else {
-          printf("Partiton %u,Thread %u activated at %u\n", (unsigned)i,
+          printf("Partiton %u,Thread %u activated at %u\n", 
                  (unsigned)pok_current_partition + 1,
+                 (unsigned)i,
                  (unsigned)thread->next_activation);
         }
       }
@@ -271,7 +273,7 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
                     // with non-infinite capacity (could be
                     // infinite with value -1 <--> INFINITE_TIME_CAPACITY)
       {
-        printf("Thread %u finished at %u \n", (unsigned)(POK_SCHED_CURRENT_THREAD),(unsigned)now);       
+        printf("Partition %u,Thread %u finished at %u \n", (unsigned)pok_current_partition + 1,(unsigned)(POK_SCHED_CURRENT_THREAD),(unsigned)now);       
         POK_CURRENT_THREAD.state = POK_STATE_WAIT_NEXT_ACTIVATION;
       }
     }
