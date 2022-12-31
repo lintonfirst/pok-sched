@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "cstdio": "c",
-        "thread.h": "c"
+        "thread.h": "c",
+        "types": "c",
+        "string.h": "c",
+        "stdio.h": "c"
     }
 }

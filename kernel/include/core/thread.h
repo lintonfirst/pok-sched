@@ -69,6 +69,7 @@ typedef struct {
 } pok_thread_t;
 
 typedef struct {
+  bool_t isDynamic;
   uint8_t priority; /* Priority is from 0 to 255 */
   uint8_t weight;
   uint8_t processor_affinity;

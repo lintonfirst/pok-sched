@@ -138,10 +138,11 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
   /**
    * We can create a thread only if the partition is in INIT mode
    */
-  if ((pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_COLD) &&
-      (pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_WARM)) {
-    return POK_ERRNO_MODE;
-  }
+  // if ((pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_COLD) &&
+  //     (pok_partitions[partition_id].mode != POK_PARTITION_MODE_INIT_WARM)) {
+  //   return POK_ERRNO_MODE;
+  // }
+  
 
   // TODO: this looks suspicious
   uint32_t id = pok_partitions[partition_id].thread_index_low +
@@ -149,6 +150,20 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
   if (id >= pok_partitions[partition_id].thread_index_high) {
     POK_ERROR_CURRENT_PARTITION(POK_ERROR_KIND_PARTITION_CONFIGURATION);
     return POK_ERRNO_TOOMANY;
+  }
+
+  if(attr->isDynamic){
+    pok_threads[id].period = INFINITE_TIME_VALUE;
+    pok_threads[id].deadline = 0;
+    pok_threads[id].deadline_stamp = 0;
+    pok_threads[id].budget = 0 ;
+    pok_threads[id].priority = 0 ;
+    pok_threads[id].time_capacity = INFINITE_TIME_VALUE;
+    pok_threads[id].remaining_time_capacity = INFINITE_TIME_VALUE;
+    pok_threads[id].next_activation = 0;
+    pok_threads[id].wakeup_time = 0;
+    pok_threads[id].state = POK_STATE_STOPPED;
+    pok_threads[id].processor_affinity = 0;
   }
 
   pok_partitions[partition_id].thread_index =
