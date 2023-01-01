@@ -4,6 +4,9 @@
         "thread.h": "c",
         "types": "c",
         "string.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "variant": "c",
+        "array": "c",
+        "primitiveset": "c"
     }
 }
