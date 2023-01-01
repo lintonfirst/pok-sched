@@ -29,7 +29,7 @@ int main() {
     pok_thread_create(&tid, &tattr);
 
     tattr.period = 500000000;
-    tattr.time_capacity = 5;
+    tattr.time_capacity = 15;
     tattr.entry = send_processed_frame;
     pok_thread_create(&tid, &tattr);
 
@@ -44,7 +44,7 @@ static void fetch_video_frame() {
             ;
         }
         frameCounter+=1;
-        printf("frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
+        printf("fetch: frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
     }
 }
 
@@ -55,23 +55,23 @@ static void unet_segmentation() {
                 
             }
             processCounter+=1;
-            if(processCounter%11==0){
+            if(processCounter%3==0||processCounter%7==0){
                 detectedNum+=1;
             }
-            printf("frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
-        }  
+        }
+        printf("unet: frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
     }
 }
 
 static void send_processed_frame() {
     while(1){
         if(detectedNum>10){
-            for (int i=0;i<50000;i++) {
+            for (int i=0;i<150000;i++) {
                 ;
             }
             detectedNum-=10;
             sendCounter+=1;
-            printf("frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
         }
+        printf("send: frameCounter %u,processCounter %u,sendCounter %u\n",frameCounter,processCounter,sendCounter);
     }
 }
