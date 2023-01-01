@@ -31,6 +31,7 @@ typedef struct {
   uint8_t weight;
   uint8_t processor_affinity;
   void *entry; /* entrypoint of the thread  */
+  int32_t dependId;
   uint64_t period;
   uint64_t deadline;
   uint64_t time_capacity;

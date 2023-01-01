@@ -82,3 +82,34 @@ uint32_t my_sched_wrr(const uint32_t index_low, const uint32_t index_high, const
     }
     return selected;
 }
+
+uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, const uint32_t prev_thread,
+                               const uint32_t current_thread) {
+    uint32_t selected = IDLE_THREAD;
+    if (pok_threads[current_thread].state == POK_STATE_RUNNABLE
+        && pok_threads[current_thread].remaining_time_capacity > 0 && pok_threads[current_thread].budget > 0) {
+        pok_threads[current_thread].budget--;
+        return current_thread;
+    }
+    for(uint32_t index=index_low;index!=index_high;index++){
+        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
+            if(pok_threads[index].dependId>=0){
+                uint32_t data=pok_threads[index].schednum;
+                uint32_t dependdata=pok_threads[pok_threads[index].dependId].schednum;
+                if(data+5>dependdata){
+                    continue;
+                }
+                if(data+12<dependdata){
+                    pok_threads[selected].budget+=2;
+                }
+            }
+            selected=index;
+            break;
+        }
+    }
+    if(selected!=IDLE_THREAD){
+        pok_threads[selected].budget=4;
+    }
+    pok_threads[selected].schednum+=1;
+    return selected;
+}

@@ -59,6 +59,8 @@ typedef struct {
   uint64_t end_time;
   uint64_t wakeup_time;
   void *entry;
+  uint32_t schednum;
+  int32_t dependId;
   uint8_t partition;
   uint32_t sp;
   uint32_t init_stack_addr;
@@ -74,6 +76,7 @@ typedef struct {
   uint8_t weight;
   uint8_t processor_affinity;
   void *entry; /* entrypoint of the thread  */
+  int32_t dependId;
   uint64_t period;
   uint64_t deadline;
   uint64_t time_capacity;

@@ -72,6 +72,8 @@ void pok_idle_thread_init() {
     pok_threads[IDLE_THREAD - i].period = INFINITE_TIME_VALUE;
     pok_threads[IDLE_THREAD - i].deadline = 0;
     pok_threads[IDLE_THREAD - i].budget = 0;
+    pok_threads[IDLE_THREAD - i].schednum = 0;
+    pok_threads[IDLE_THREAD - i].dependId = -1;
     pok_threads[IDLE_THREAD - i].deadline_stamp = 0;
     pok_threads[IDLE_THREAD - i].time_capacity = INFINITE_TIME_VALUE;
     pok_threads[IDLE_THREAD - i].next_activation = 0;
@@ -110,6 +112,8 @@ void pok_thread_init(void) {
     pok_kernel_error(POK_ERROR_KIND_KERNEL_CONFIG);
   }
   for (i = 0; i < POK_CONFIG_NB_THREADS; ++i) {
+    pok_threads[i].schednum = 0;
+    pok_threads[i].dependId = -1;
     pok_threads[i].period = INFINITE_TIME_VALUE;
     pok_threads[i].deadline = 0;
     pok_threads[i].deadline_stamp = 0;
@@ -155,6 +159,8 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
   if(attr->isDynamic){
     pok_threads[id].period = INFINITE_TIME_VALUE;
     pok_threads[id].deadline = 0;
+    pok_threads[id].schednum = 0;
+    pok_threads[id].dependId = -1;
     pok_threads[id].deadline_stamp = 0;
     pok_threads[id].budget = 0 ;
     pok_threads[id].priority = 0 ;
@@ -199,6 +205,10 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
 
   if (attr->weight > 0) {
     pok_threads[id].weight = attr->weight;
+  }
+
+  if (attr->dependId>=0) {
+    pok_threads[id].dependId = attr->dependId;
   }
 
   pok_threads[id].processor_affinity =
