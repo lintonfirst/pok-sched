@@ -50,9 +50,10 @@ uint32_t my_sched_rr(const uint32_t index_low, const uint32_t index_high, const 
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
-            selected=index;
+    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+        int idx=index%(index_high-index_low)+index_low;
+        if(pok_threads[idx].state == POK_STATE_RUNNABLE){
+            selected=idx;
             break;
         }
     }
@@ -71,9 +72,10 @@ uint32_t my_sched_wrr(const uint32_t index_low, const uint32_t index_high, const
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
-            selected=index;
+    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+        int idx=index%(index_high-index_low)+index_low;
+        if(pok_threads[idx].state == POK_STATE_RUNNABLE){
+            selected=idx;
             break;
         }
     }
