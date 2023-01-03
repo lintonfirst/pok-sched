@@ -268,6 +268,7 @@ uint32_t pok_elect_thread(uint8_t new_partition_id) {
       if (POK_CURRENT_THREAD.remaining_time_capacity > 0) {
         POK_CURRENT_THREAD.remaining_time_capacity =
             POK_CURRENT_THREAD.remaining_time_capacity - 1;
+        printf("Partition %u,Thread %u scheduled at %u \n", (unsigned)pok_current_partition + 1,(unsigned)(POK_SCHED_CURRENT_THREAD),(unsigned)now); 
       } else if (POK_CURRENT_THREAD.time_capacity >
                  0) // Wait next activation only for thread
                     // with non-infinite capacity (could be

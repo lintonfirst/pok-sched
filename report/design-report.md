@@ -111,7 +111,7 @@ uint32_t my_sched_rr(const uint32_t index_low, const uint32_t index_high, const 
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+    for(uint32_t index=current_thread+1;index!=current_thread+1+index_high-index_low;index++){
         int idx=index%(index_high-index_low)+index_low;
         if(pok_threads[idx].state == POK_STATE_RUNNABLE){
             selected=idx;
@@ -239,7 +239,7 @@ static void send_processed_frame() {
 
 在实验在发现，内核态里无法读取用户态中的变量，也无法执行用户态中的函数，这给调度带来了困难。原来的理想调度策略是这样的，在调度函数中判断依赖关系是否满足，只有满足时才会调度线程，避免用户态任务的idle开销。
 
-实际做法是给pok_thread_t增加了一个依赖线程的字段dependId和被调度次数的计数器。在round robin调度策略的基础上，针对图像检测任务对请求视频帧任务的依赖，如果调度次数领先数量小于5则不调度图象处理线程；如果调度次数领先数量大于12,则给图象处理线程额外的budget，提高处理速度。
+实际做法是给pok_thread_t增加了一个依赖线程的字段dependId和被调度次数的计数器。在round robin调度策略的基础上，针对图像检测任务对请求视频帧任务的依赖，如果调度次数领先数量小于5则不调度图象处理线程,并将图像处理线程的time_capacity补偿给获取视频帧的线程；如果调度次数领先数量大于12,则给图象处理线程额外的budget，提高处理速度，为了公平起见，相应地将获取视频帧线程的time_capacity补偿给图象处理线程。
 
 ```cpp
 uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, const uint32_t prev_thread, const uint32_t current_thread) {
@@ -249,19 +249,25 @@ uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, co
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
-            if(pok_threads[index].dependId>=0){
-                uint32_t data=pok_threads[index].schednum;
-                uint32_t dependdata=pok_threads[pok_threads[index].dependId].schednum;
+    for(uint32_t index=current_thread+1;index!=current_thread+1+index_high-index_low;index++){
+        int idx=index%(index_high-index_low)+index_low;
+        if(pok_threads[idx].state == POK_STATE_RUNNABLE){
+            if(pok_threads[idx].dependId>=0){
+                uint32_t data=pok_threads[idx].schednum;
+                uint32_t dependdata=pok_threads[pok_threads[idx].dependId].schednum;
                 if(data+5>dependdata){
+                    pok_threads[pok_threads[idx].dependId].remaining_time_capacity+=2;
+                    pok_threads[idx].remaining_time_capacity-=2;
+                    pok_threads[selected].budget-=2;
                     continue;
                 }
                 if(data+12<dependdata){
+                    pok_threads[pok_threads[idx].dependId].remaining_time_capacity-=2;
+                    pok_threads[idx].remaining_time_capacity+=2;
                     pok_threads[selected].budget+=2;
                 }
             }
-            selected=index;
+            selected=idx;
             break;
         }
     }
@@ -273,3 +279,4 @@ uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, co
 }
 ```
 
+实验将以相同frameCounter耗费的时间作为衡量系统效率的标准。从理论上分析，视频帧获取线程和图象处理线程是相同周期的，前者的时间占用率为30%，后者为20%。假如说没有time_capacity补偿机制，不存在依赖的视频帧获取线程运行时间是恒定的，frameCounter的增加数值也是恒定的，图象处理线程在等待中空转不会影响frameCounter；但是time_capacity补偿机制的存在，使得图象处理线程在等待中空转的时间真正被节省了下来，转化成了视频帧获取线程的额外运行时间，从而提高了整个系统的执行效率。

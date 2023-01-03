@@ -50,7 +50,7 @@ uint32_t my_sched_rr(const uint32_t index_low, const uint32_t index_high, const 
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+    for(uint32_t index=current_thread+1;index!=current_thread+1+index_high-index_low;index++){
         int idx=index%(index_high-index_low)+index_low;
         if(pok_threads[idx].state == POK_STATE_RUNNABLE){
             selected=idx;
@@ -72,7 +72,7 @@ uint32_t my_sched_wrr(const uint32_t index_low, const uint32_t index_high, const
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+    for(uint32_t index=current_thread+1;index!=current_thread+1+index_high-index_low;index++){
         int idx=index%(index_high-index_low)+index_low;
         if(pok_threads[idx].state == POK_STATE_RUNNABLE){
             selected=idx;
@@ -93,16 +93,21 @@ uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, co
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+    for(uint32_t index=current_thread+1;index!=current_thread+1+index_high-index_low;index++){
         int idx=index%(index_high-index_low)+index_low;
         if(pok_threads[idx].state == POK_STATE_RUNNABLE){
             if(pok_threads[idx].dependId>=0){
                 uint32_t data=pok_threads[idx].schednum;
                 uint32_t dependdata=pok_threads[pok_threads[idx].dependId].schednum;
                 if(data+5>dependdata){
+                    pok_threads[pok_threads[idx].dependId].remaining_time_capacity+=2;
+                    pok_threads[idx].remaining_time_capacity-=2;
+                    pok_threads[selected].budget-=2;
                     continue;
                 }
                 if(data+12<dependdata){
+                    pok_threads[pok_threads[idx].dependId].remaining_time_capacity-=2;
+                    pok_threads[idx].remaining_time_capacity+=2;
                     pok_threads[selected].budget+=2;
                 }
             }
