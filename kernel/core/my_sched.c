@@ -93,11 +93,12 @@ uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, co
         pok_threads[current_thread].budget--;
         return current_thread;
     }
-    for(uint32_t index=index_low;index!=index_high;index++){
-        if(pok_threads[index].state == POK_STATE_RUNNABLE && index!=current_thread){
-            if(pok_threads[index].dependId>=0){
-                uint32_t data=pok_threads[index].schednum;
-                uint32_t dependdata=pok_threads[pok_threads[index].dependId].schednum;
+    for(uint32_t index=current_thread;index!=current_thread+index_high-index_low;index++){
+        int idx=index%(index_high-index_low)+index_low;
+        if(pok_threads[idx].state == POK_STATE_RUNNABLE){
+            if(pok_threads[idx].dependId>=0){
+                uint32_t data=pok_threads[idx].schednum;
+                uint32_t dependdata=pok_threads[pok_threads[idx].dependId].schednum;
                 if(data+5>dependdata){
                     continue;
                 }
@@ -105,7 +106,7 @@ uint32_t my_sched_depend(const uint32_t index_low, const uint32_t index_high, co
                     pok_threads[selected].budget+=2;
                 }
             }
-            selected=index;
+            selected=idx;
             break;
         }
     }
