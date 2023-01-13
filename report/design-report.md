@@ -1,6 +1,6 @@
 # 《实时系统与调度》设计与实现报告
 
-小组成员： 邹立凯 吴泽一 蓝煜斌
+小组成员： 邹立凯 吴泽一 蓝煜斌 贡献度均等
 
 项目仓库：https://github.com/lintonfirst/pok-sched.git
 
